@@ -54,3 +54,5 @@ Bu değerler Vite tarafından build sırasında tarayıcıya gömülür. Publish
 ## Vercel
 
 Proje Vercel'e dağıtılmıştır. Aynı ortam değişkenleri Vercel'de `Production`, `Preview` ve `Development` ortamları için tanımlıdır. SPA yönlendirmeleri `vercel.json` içindeki rewrite kuralıyla desteklenir.
+
+`main` branch'ine yapılan her push, Vercel tarafından otomatik olarak production ortamına dağıtılır.
