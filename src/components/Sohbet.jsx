@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
+import { saatFormatla } from '../lib/format.js'
 
 export default function Sohbet({ konusma, user }) {
   const [mesajlar, setMesajlar] = useState([])
@@ -96,9 +97,7 @@ export default function Sohbet({ konusma, user }) {
         {mesajlar.map((m) => (
           <div key={m.id} className={m.gonderen_id === user.id ? 'bubble me' : 'bubble'}>
             <p>{m.metin}</p>
-            <span>
-              {new Date(m.created_at).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}
-            </span>
+            <span>{saatFormatla(m.created_at)}</span>
           </div>
         ))}
         <div ref={alt} />

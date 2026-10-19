@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
+import { tarihFormatla } from '../lib/format.js'
 import logo from '../images/logo.png'
 import '../css/Hesap.css'
 
@@ -29,7 +30,7 @@ export default function Hesabim() {
         <ul className="hesap-list">
           <li><span>Ad Soyad</span>{user.user_metadata?.ad || '-'}</li>
           <li><span>E-posta</span>{user.email}</li>
-          <li><span>Üyelik tarihi</span>{new Date(user.created_at).toLocaleDateString('tr-TR')}</li>
+          <li><span>Üyelik tarihi</span>{tarihFormatla(user.created_at)}</li>
         </ul>
         <Link to="/ilanlarim" className="hesap-btn">İlanlarım</Link>
       </div>

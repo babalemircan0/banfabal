@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
+import { fiyatFormatla } from '../lib/format.js'
 import logo from '../images/logo.png'
 import '../css/Home.css'
 
@@ -221,7 +222,7 @@ export default function Home() {
                 <div className="listing-body">
                   <h3>{i.baslik}</h3>
                   <p className="listing-meta">{i.il} / {i.ilce} · {i.metrekare} m²</p>
-                  <p className="listing-price">{Number(i.fiyat).toLocaleString('tr-TR')} ₺</p>
+                  <p className="listing-price">{fiyatFormatla(i.fiyat)}</p>
                 </div>
               </Link>
             ))}

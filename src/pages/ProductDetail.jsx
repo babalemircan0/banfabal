@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import logo from '../images/logo.png'
 import MesajModal from '../components/MesajModal.jsx'
+import { fiyatFormatla, tarihFormatla } from '../lib/format.js'
 import '../css/Mesajlar.css'
 import '../css/ProductDetail.css'
 
@@ -135,7 +136,7 @@ export default function ProductDetail() {
 
           <div className="detail-info-box">
             <h1>{ilan.baslik}</h1>
-            <p className="detail-price">{Number(ilan.fiyat).toLocaleString('tr-TR')} ₺</p>
+            <p className="detail-price">{fiyatFormatla(ilan.fiyat)}</p>
             <ul className="detail-list">
               <li><span>İlan Sahibi</span>{ilan.satici_adi || 'Belirtilmemiş'}</li>
               <li><span>Konum</span>{ilan.il} / {ilan.ilce}</li>
@@ -202,7 +203,7 @@ export default function ProductDetail() {
                 <li key={y.id}>
                   <div className="comment-head">
                     <strong>{y.yazar_adi}</strong>
-                    <span>{new Date(y.created_at).toLocaleDateString('tr-TR')}</span>
+                    <span>{tarihFormatla(y.created_at)}</span>
                     {user?.id === y.user_id && (
                       <button type="button" onClick={() => yorumSil(y.id)}>Sil</button>
                     )}

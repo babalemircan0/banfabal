@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import { fotoSil } from '../lib/storage.js'
+import { fiyatFormatla } from '../lib/format.js'
 import logo from '../images/logo.png'
 import '../css/Hesap.css'
 
@@ -76,7 +77,7 @@ export default function Ilanlarim() {
                 <div className="ilanlarim-info">
                   <Link to={`/ilan/${i.id}`}>{i.baslik}</Link>
                   <p>{i.il} / {i.ilce} · {i.metrekare} m²</p>
-                  <p className="ilanlarim-price">{Number(i.fiyat).toLocaleString('tr-TR')} ₺</p>
+                  <p className="ilanlarim-price">{fiyatFormatla(i.fiyat)}</p>
                 </div>
                 <div className="ilanlarim-actions">
                   <Link to={`/ilan-duzenle/${i.id}`} className="hesap-edit">Düzenle</Link>
