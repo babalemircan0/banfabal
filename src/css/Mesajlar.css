@@ -1,0 +1,168 @@
+.mesajlar-page { flex: 1; background: #fafafa; text-align: left; }
+
+.mesajlar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 28px;
+  background: #fff;
+  border-bottom: 1px solid #e5e5e5;
+}
+.mesajlar-logo { display: block; height: 44px; width: auto; }
+.mesajlar-back { font-size: 15px; color: #333; text-decoration: none; }
+.mesajlar-back:hover { text-decoration: underline; }
+
+.mesajlar-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 16px;
+  max-width: 1000px;
+  margin: 24px auto;
+  padding: 0 20px;
+  height: 560px;
+}
+
+.mesajlar-list,
+.mesajlar-chat {
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.mesajlar-list { overflow-y: auto; }
+.mesajlar-list h2 { margin: 0; padding: 14px 16px; font-size: 18px; color: #222; text-align: left; border-bottom: 1px solid #eee; }
+.mesajlar-empty { padding: 30px 16px; text-align: center; color: #888; font-size: 14px; }
+
+.konusma {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 12px 16px;
+  font: inherit;
+  text-align: left;
+  background: #fff;
+  border: none;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+}
+.konusma:hover { background: #f7f7f7; }
+.konusma.active { background: #efefef; }
+.konusma strong { display: block; font-size: 15px; color: #222; }
+.konusma span { display: block; font-size: 13px; color: #777; margin-top: 2px; }
+
+.nav-badge {
+  display: inline-block;
+  min-width: 18px;
+  padding: 1px 6px;
+  margin-left: 6px;
+  font-size: 12px;
+  font-style: normal;
+  line-height: 16px;
+  text-align: center;
+  color: #fff;
+  background: #333;
+  border-radius: 10px;
+}
+
+/* Sohbet */
+.sohbet { display: flex; flex-direction: column; height: 100%; min-height: 0; }
+.sohbet-head {
+  padding: 12px 16px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.sohbet-head strong { color: #222; }
+.sohbet-head span { font-size: 13px; color: #777; }
+.sohbet-head a { color: #333; }
+
+.sohbet-body {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 16px;
+  background: #fafafa;
+}
+.sohbet-empty { text-align: center; color: #888; font-size: 14px; padding: 20px 0; }
+.sohbet-error { padding: 6px 16px; color: #b3261e; font-size: 14px; }
+
+.bubble {
+  align-self: flex-start;
+  max-width: 75%;
+  padding: 8px 12px;
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+}
+.bubble.me { align-self: flex-end; background: #333; border-color: #333; color: #fff; }
+.bubble p { font-size: 15px; white-space: pre-wrap; word-break: break-word; }
+.bubble span { display: block; margin-top: 2px; font-size: 11px; opacity: 0.6; text-align: right; }
+
+.sohbet-form { display: flex; gap: 8px; padding: 10px 12px; border-top: 1px solid #eee; background: #fff; }
+.sohbet-form input {
+  flex: 1;
+  padding: 9px 12px;
+  font: inherit;
+  color: #222;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+.sohbet-form input:focus { outline: none; border-color: #333; }
+.sohbet-form button {
+  padding: 8px 18px;
+  font: inherit;
+  color: #fff;
+  background: #333;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.sohbet-form button:disabled { opacity: 0.6; }
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.4);
+}
+.modal-box {
+  position: relative;
+  width: 92%;
+  max-width: 460px;
+  height: 520px;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.modal-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  z-index: 2;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  font-size: 18px;
+  line-height: 22px;
+  color: #555;
+  background: #f0f0f0;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.modal-box .sohbet-head { padding-right: 44px; }
+
+@media (max-width: 760px) {
+  .mesajlar-layout { grid-template-columns: 1fr; height: auto; }
+  .mesajlar-chat { height: 480px; }
+}
