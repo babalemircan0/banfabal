@@ -1,0 +1,4 @@
+{
+  "name": "banfabal",
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+}
