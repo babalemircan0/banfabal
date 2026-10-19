@@ -3,9 +3,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import logo from '../images/logo.png'
 import FotoSecici from '../components/FotoSecici.jsx'
+import { FOTO_BUCKET } from '../lib/storage.js'
 import '../css/IlanVer.css'
-
-const BUCKET = 'ilan-fotograflari'
 
 export default function IlanVer() {
   const navigate = useNavigate()
@@ -38,30 +37,50 @@ export default function IlanVer() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    if (!user) return
     setSaving(true)
     setError('')
+
+    const fiyat = Number(form.fiyat)
+    const metrekare = Number(form.metrekare)
+    if (!Number.isFinite(fiyat) || fiyat < 0 || !Number.isFinite(metrekare) || metrekare < 0) {
+      setError('Fiyat ve metrekare geçerli bir sayı olmalı.')
+      setSaving(false)
+      return
+    }
+
+    const yuklenenYollar = []
     try {
       const urls = []
       for (const foto of fotolar) {
-        const ext = foto.file.name.split('.').pop()
+        const ext = foto.file.name.split('.').pop().toLowerCase()
         const path = `${user.id}/${crypto.randomUUID()}.${ext}`
-        const { error: upErr } = await supabase.storage.from(BUCKET).upload(path, foto.file)
+        const { error: upErr } = await supabase.storage.from(FOTO_BUCKET).upload(path, foto.file)
         if (upErr) throw upErr
-        urls.push(supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl)
+        yuklenenYollar.push(path)
+        urls.push(supabase.storage.from(FOTO_BUCKET).getPublicUrl(path).data.publicUrl)
       }
 
       const { error: insErr } = await supabase.from('ilanlar').insert({
         ...form,
-        fiyat: Number(form.fiyat),
-        metrekare: Number(form.metrekare),
+        baslik: form.baslik.trim(),
+        aciklama: form.aciklama.trim(),
+        il: form.il.trim(),
+        ilce: form.ilce.trim(),
+        fiyat,
+        metrekare,
         fotograflar: urls,
         user_id: user.id,
-        satici_adi: user.user_metadata?.ad || user.email,
+        satici_adi: (user.user_metadata?.ad || '').trim() || user.email,
       })
       if (insErr) throw insErr
       navigate('/')
     } catch (err) {
-      setError(err.message)
+      // İlan kaydı başarısız olursa yüklenen fotoğrafları temizle.
+      if (yuklenenYollar.length > 0) {
+        await supabase.storage.from(FOTO_BUCKET).remove(yuklenenYollar)
+      }
+      setError(err.message || 'İlan yayınlanamadı.')
     } finally {
       setSaving(false)
     }
@@ -76,11 +95,11 @@ export default function IlanVer() {
         <h2>İlan Ver</h2>
 
         <label>Başlık
-          <input required value={form.baslik} onChange={set('baslik')} />
+          <input required maxLength={120} value={form.baslik} onChange={set('baslik')} />
         </label>
 
         <label>Açıklama
-          <textarea rows="4" value={form.aciklama} onChange={set('aciklama')} />
+          <textarea rows="4" maxLength={2000} value={form.aciklama} onChange={set('aciklama')} />
         </label>
 
         <div className="ilan-row">
@@ -94,10 +113,10 @@ export default function IlanVer() {
 
         <div className="ilan-row">
           <label>İl
-            <input required value={form.il} onChange={set('il')} />
+            <input required maxLength={50} value={form.il} onChange={set('il')} />
           </label>
           <label>İlçe
-            <input required value={form.ilce} onChange={set('ilce')} />
+            <input required maxLength={50} value={form.ilce} onChange={set('ilce')} />
           </label>
         </div>
 

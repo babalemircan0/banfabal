@@ -12,6 +12,7 @@ export default function Mesajlar() {
   const [okunmamis, setOkunmamis] = useState({})
   const [secili, setSecili] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [hata, setHata] = useState('')
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -24,21 +25,33 @@ export default function Mesajlar() {
     if (!user) return
 
     const yukle = async () => {
-      const { data: k } = await supabase
+      setHata('')
+      const { data: k, error: konusmaHatasi } = await supabase
         .from('konusmalar')
         .select('*')
+        .or(`alici_id.eq.${user.id},satici_id.eq.${user.id}`)
         .order('created_at', { ascending: false })
-      setKonusmalar(k || [])
 
-      const { data: m } = await supabase
-        .from('mesajlar')
-        .select('konusma_id')
-        .eq('okundu', false)
-        .neq('gonderen_id', user.id)
+      if (konusmaHatasi) setHata('Konuşmalar yüklenemedi.')
+
+      const liste = k || []
+      setKonusmalar(liste)
+
       const sayilar = {}
-      ;(m || []).forEach((x) => {
-        sayilar[x.konusma_id] = (sayilar[x.konusma_id] || 0) + 1
-      })
+      const konusmaIdleri = liste.map((x) => x.id)
+      if (konusmaIdleri.length > 0) {
+        const { data: m } = await supabase
+          .from('mesajlar')
+          .select('konusma_id')
+          .in('konusma_id', konusmaIdleri)
+          .eq('okundu', false)
+          .neq('gonderen_id', user.id)
+
+        ;(m || []).forEach((x) => {
+          sayilar[x.konusma_id] = (sayilar[x.konusma_id] || 0) + 1
+        })
+      }
+
       setOkunmamis(sayilar)
       setLoading(false)
     }
@@ -69,6 +82,7 @@ export default function Mesajlar() {
       <div className="mesajlar-layout">
         <aside className="mesajlar-list">
           <h2>Mesajlar</h2>
+          {hata && <p className="mesajlar-empty">{hata}</p>}
           {loading ? (
             <p className="mesajlar-empty">Yükleniyor...</p>
           ) : konusmalar.length === 0 ? (

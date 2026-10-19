@@ -11,6 +11,11 @@ export default function MesajModal({ ilan, user, onClose }) {
     let aktif = true
 
     const baslat = async () => {
+      if (ilan.user_id === user.id) {
+        if (aktif) setHata('Kendi ilanına mesaj gönderemezsin.')
+        return
+      }
+
       const { data: mevcut } = await supabase
         .from('konusmalar')
         .select('*')

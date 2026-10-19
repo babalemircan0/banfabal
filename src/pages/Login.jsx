@@ -21,7 +21,7 @@ export default function Login() {
     e.preventDefault()
     setLoading(true)
     setError('')
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password })
     setLoading(false)
     if (error) setError(hataMesaji(error.message))
     else navigate('/')
@@ -34,10 +34,10 @@ export default function Login() {
         <h2>Giriş Yap</h2>
 
         <label>E-posta
-          <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+          <input type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} />
         </label>
         <label>Şifre
-          <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
+          <input type="password" required autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} />
         </label>
 
         {error && <p className="auth-error">{error}</p>}

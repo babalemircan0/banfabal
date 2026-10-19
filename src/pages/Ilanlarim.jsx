@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
+import { fotoSil } from '../lib/storage.js'
 import logo from '../images/logo.png'
 import '../css/Hesap.css'
-
-const BUCKET = 'ilan-fotograflari'
 
 export default function Ilanlarim() {
   const navigate = useNavigate()
@@ -18,11 +17,12 @@ export default function Ilanlarim() {
         navigate('/giris')
         return
       }
-      const { data: rows } = await supabase
+      const { data: rows, error: fetchError } = await supabase
         .from('ilanlar')
         .select('*')
         .eq('user_id', data.session.user.id)
         .order('created_at', { ascending: false })
+      if (fetchError) setError('İlanlar yüklenemedi.')
       setIlanlar(rows || [])
       setLoading(false)
     })
@@ -32,12 +32,17 @@ export default function Ilanlarim() {
     if (!window.confirm('Bu ilanı silmek istediğine emin misin?')) return
     setError('')
 
-    const paths = (ilan.fotograflar || []).map((url) => url.split(`/${BUCKET}/`)[1])
-    if (paths.length > 0) await supabase.storage.from(BUCKET).remove(paths)
-
     const { error } = await supabase.from('ilanlar').delete().eq('id', ilan.id)
-    if (error) setError('İlan silinemedi.')
-    else setIlanlar(ilanlar.filter((i) => i.id !== ilan.id))
+    if (error) {
+      setError('İlan silinemedi.')
+      return
+    }
+
+    setIlanlar(ilanlar.filter((i) => i.id !== ilan.id))
+
+    // İlan kaydı silindikten sonra fotoğrafları temizle.
+    const fotoHatasi = await fotoSil(supabase, ilan.fotograflar)
+    if (fotoHatasi) console.error('Fotoğraflar silinemedi:', fotoHatasi.message)
   }
 
   return (

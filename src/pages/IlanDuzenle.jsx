@@ -3,9 +3,8 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import logo from '../images/logo.png'
 import FotoSecici from '../components/FotoSecici.jsx'
+import { FOTO_BUCKET, fotoSil } from '../lib/storage.js'
 import '../css/IlanVer.css'
-
-const BUCKET = 'ilan-fotograflari'
 
 export default function IlanDuzenle() {
   const { id } = useParams()
@@ -14,6 +13,7 @@ export default function IlanDuzenle() {
   const [ready, setReady] = useState(false)
   const [form, setForm] = useState(null)
   const [fotolar, setFotolar] = useState([])
+  const [eskiFotograflar, setEskiFotograflar] = useState([])
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
 
@@ -40,6 +40,7 @@ export default function IlanDuzenle() {
         ilce: ilan.ilce || '',
         imar_durumu: ilan.imar_durumu || 'Konut',
       })
+      setEskiFotograflar(ilan.fotograflar || [])
       setFotolar((ilan.fotograflar || []).map((url) => ({ id: url, url })))
       setReady(true)
     })
@@ -49,8 +50,19 @@ export default function IlanDuzenle() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    if (!user || !form) return
     setSaving(true)
     setError('')
+
+    const fiyat = Number(form.fiyat)
+    const metrekare = Number(form.metrekare)
+    if (!Number.isFinite(fiyat) || fiyat < 0 || !Number.isFinite(metrekare) || metrekare < 0) {
+      setError('Fiyat ve metrekare geçerli bir sayı olmalı.')
+      setSaving(false)
+      return
+    }
+
+    const yuklenenYollar = []
     try {
       const urller = []
       for (const foto of fotolar) {
@@ -58,26 +70,40 @@ export default function IlanDuzenle() {
           urller.push(foto.url)
           continue
         }
-        const ext = foto.file.name.split('.').pop()
+        const ext = foto.file.name.split('.').pop().toLowerCase()
         const path = `${user.id}/${crypto.randomUUID()}.${ext}`
-        const { error: upErr } = await supabase.storage.from(BUCKET).upload(path, foto.file)
+        const { error: upErr } = await supabase.storage.from(FOTO_BUCKET).upload(path, foto.file)
         if (upErr) throw upErr
-        urller.push(supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl)
+        yuklenenYollar.push(path)
+        urller.push(supabase.storage.from(FOTO_BUCKET).getPublicUrl(path).data.publicUrl)
       }
 
       const { error: updErr } = await supabase
         .from('ilanlar')
         .update({
           ...form,
-          fiyat: Number(form.fiyat),
-          metrekare: Number(form.metrekare),
+          baslik: form.baslik.trim(),
+          aciklama: form.aciklama.trim(),
+          il: form.il.trim(),
+          ilce: form.ilce.trim(),
+          fiyat,
+          metrekare,
           fotograflar: urller,
         })
         .eq('id', id)
       if (updErr) throw updErr
+
+      // Kullanıcının kaldırdığı eski fotoğrafları storage'dan temizle.
+      const silinecekler = eskiFotograflar.filter((url) => !urller.includes(url))
+      if (silinecekler.length > 0) await fotoSil(supabase, silinecekler)
+
       navigate('/ilanlarim')
     } catch (err) {
-      setError('İlan güncellenemedi: ' + err.message)
+      // Güncelleme başarısız olursa yeni yüklenen fotoğrafları temizle.
+      if (yuklenenYollar.length > 0) {
+        await supabase.storage.from(FOTO_BUCKET).remove(yuklenenYollar)
+      }
+      setError('İlan güncellenemedi: ' + (err.message || 'Bilinmeyen hata'))
     } finally {
       setSaving(false)
     }
@@ -92,11 +118,11 @@ export default function IlanDuzenle() {
         <h2>İlanı Düzenle</h2>
 
         <label>Başlık
-          <input required value={form.baslik} onChange={set('baslik')} />
+          <input required maxLength={120} value={form.baslik} onChange={set('baslik')} />
         </label>
 
         <label>Açıklama
-          <textarea rows="4" value={form.aciklama} onChange={set('aciklama')} />
+          <textarea rows="4" maxLength={2000} value={form.aciklama} onChange={set('aciklama')} />
         </label>
 
         <div className="ilan-row">
@@ -110,10 +136,10 @@ export default function IlanDuzenle() {
 
         <div className="ilan-row">
           <label>İl
-            <input required value={form.il} onChange={set('il')} />
+            <input required maxLength={50} value={form.il} onChange={set('il')} />
           </label>
           <label>İlçe
-            <input required value={form.ilce} onChange={set('ilce')} />
+            <input required maxLength={50} value={form.ilce} onChange={set('ilce')} />
           </label>
         </div>
 

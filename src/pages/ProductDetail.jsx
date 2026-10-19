@@ -78,8 +78,13 @@ export default function ProductDetail() {
   }
 
   const yorumSil = async (yid) => {
+    if (!window.confirm('Bu yorumu silmek istediğine emin misin?')) return
     const { error } = await supabase.from('yorumlar').delete().eq('id', yid)
-    if (!error) setYorumlar(yorumlar.filter((y) => y.id !== yid))
+    if (error) setUyari('Yorum silinemedi.')
+    else {
+      setUyari('')
+      setYorumlar(yorumlar.filter((y) => y.id !== yid))
+    }
   }
 
   useEffect(() => {

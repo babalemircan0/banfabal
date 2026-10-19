@@ -4,7 +4,7 @@ import { supabase } from '../supabaseClient'
 import logo from '../images/logo.png'
 import '../css/Auth.css'
 
-export default function SingUp() {
+export default function SignUp() {
   const navigate = useNavigate()
   const [ad, setAd] = useState('')
   const [email, setEmail] = useState('')
@@ -18,15 +18,19 @@ export default function SingUp() {
     e.preventDefault()
     setError('')
     setInfo('')
+    if (!ad.trim()) {
+      setError('Ad soyad gerekli.')
+      return
+    }
     if (password !== password2) {
       setError('Şifreler eşleşmiyor.')
       return
     }
     setLoading(true)
     const { data, error } = await supabase.auth.signUp({
-      email,
+      email: email.trim(),
       password,
-      options: { data: { ad } },
+      options: { data: { ad: ad.trim() } },
     })
     setLoading(false)
     if (error) setError(error.message)
@@ -41,16 +45,16 @@ export default function SingUp() {
         <h2>Kayıt Ol</h2>
 
         <label>Ad Soyad
-          <input required value={ad} onChange={(e) => setAd(e.target.value)} />
+          <input required autoComplete="name" value={ad} onChange={(e) => setAd(e.target.value)} />
         </label>
         <label>E-posta
-          <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+          <input type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} />
         </label>
         <label>Şifre
-          <input type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} />
+          <input type="password" required minLength={6} autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} />
         </label>
         <label>Şifre (tekrar)
-          <input type="password" required minLength={6} value={password2} onChange={(e) => setPassword2(e.target.value)} />
+          <input type="password" required minLength={6} autoComplete="new-password" value={password2} onChange={(e) => setPassword2(e.target.value)} />
         </label>
 
         {error && <p className="auth-error">{error}</p>}

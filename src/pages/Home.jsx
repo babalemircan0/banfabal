@@ -14,6 +14,8 @@ const BOS_FILTRE = {
   maxM2: '',
 }
 
+const YIL = new Date().getFullYear()
+
 export default function Home() {
   const [user, setUser] = useState(null)
   const [ilanlar, setIlanlar] = useState([])
@@ -22,6 +24,7 @@ export default function Home() {
   const [filtreAcik, setFiltreAcik] = useState(false)
   const [menuAcik, setMenuAcik] = useState(false)
   const [okunmamis, setOkunmamis] = useState(0)
+  const [hata, setHata] = useState('')
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setUser(data.session?.user ?? null))
@@ -34,15 +37,24 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
-    if (!user) {
-      setOkunmamis(0)
-      return
-    }
+    if (!user) return
 
     const say = async () => {
+      const { data: konusmalar } = await supabase
+        .from('konusmalar')
+        .select('id')
+        .or(`alici_id.eq.${user.id},satici_id.eq.${user.id}`)
+
+      const konusmaIdleri = (konusmalar || []).map((k) => k.id)
+      if (konusmaIdleri.length === 0) {
+        setOkunmamis(0)
+        return
+      }
+
       const { count } = await supabase
         .from('mesajlar')
         .select('id', { count: 'exact', head: true })
+        .in('konusma_id', konusmaIdleri)
         .eq('okundu', false)
         .neq('gonderen_id', user.id)
       setOkunmamis(count || 0)
@@ -62,13 +74,16 @@ export default function Home() {
       .from('ilanlar')
       .select('*')
       .order('created_at', { ascending: false })
-      .then(({ data }) => {
+      .then(({ data, error }) => {
+        if (error) setHata('İlanlar yüklenemedi. Lütfen sayfayı yenile.')
         setIlanlar(data || [])
         setLoading(false)
       })
   }, [])
 
   const handleLogout = () => supabase.auth.signOut()
+
+  const okunmamisSayisi = user ? okunmamis : 0
 
   const setF = (k) => (e) => setFiltre({ ...filtre, [k]: e.target.value })
 
@@ -94,7 +109,7 @@ export default function Home() {
           </Link>
           {user && (
             <span className="navbar-welcome">
-              Hoşgeldin, {user.user_metadata?.ad || user.email}
+              Hoş geldin, {user.user_metadata?.ad || user.email}
             </span>
           )}
         </div>
@@ -111,7 +126,7 @@ export default function Home() {
                   onClick={() => setMenuAcik(!menuAcik)}
                 >
                   Hesabım ▾
-                  {okunmamis > 0 && <span className="nav-badge">{okunmamis}</span>}
+                  {okunmamisSayisi > 0 && <span className="nav-badge">{okunmamisSayisi}</span>}
                 </button>
                 {menuAcik && (
                   <div className="nav-dropdown" onClick={() => setMenuAcik(false)}>
@@ -119,7 +134,7 @@ export default function Home() {
                     <Link to="/ilanlarim">İlanlarım</Link>
                     <Link to="/mesajlar">
                       Mesajlar
-                      {okunmamis > 0 && <span className="nav-badge">{okunmamis}</span>}
+                      {okunmamisSayisi > 0 && <span className="nav-badge">{okunmamisSayisi}</span>}
                     </Link>
                   </div>
                 )}
@@ -186,7 +201,9 @@ export default function Home() {
         </div>
         )}
 
-        {loading ? (
+        {hata ? (
+          <p className="listings-empty">{hata}</p>
+        ) : loading ? (
           <p className="listings-empty">Yükleniyor...</p>
         ) : ilanlar.length === 0 ? (
           <p className="listings-empty">İlan yoktur.</p>
@@ -213,7 +230,7 @@ export default function Home() {
       </main>
 
       <footer className="footer">
-        <p className="footer-copy">© {new Date().getFullYear()} Banfabal. Tüm hakları saklıdır.</p>
+        <p className="footer-copy">© {YIL} Banfabal. Tüm hakları saklıdır.</p>
       </footer>
     </>
   )

@@ -57,8 +57,11 @@
 }
 
 .auth-submit {
+  display: block;
   padding: 10px;
   font: inherit;
+  text-align: center;
+  text-decoration: none;
   color: #fff;
   background: #333;
   border: none;
