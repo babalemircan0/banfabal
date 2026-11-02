@@ -1,0 +1,9 @@
+.env
+.env.*
+.vercel
+.git
+node_modules
+dist
+dist-ssr
+*.log
+.DS_Store

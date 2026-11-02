@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
-import logo from '../images/logo.png'
 import '../css/Auth.css'
 
 export default function SignUp() {
@@ -41,7 +40,6 @@ export default function SignUp() {
   return (
     <div className="auth-page">
       <form className="auth-card" onSubmit={handleSubmit}>
-        <Link to="/"><img src={logo} alt="Banfabal" className="auth-logo" /></Link>
         <h2>Kayıt Ol</h2>
 
         <label>Ad Soyad
@@ -66,6 +64,11 @@ export default function SignUp() {
 
         <p className="auth-switch">
           Zaten hesabın var mı? <Link to="/giris">Giriş yap</Link>
+        </p>
+
+        <p className="auth-legal">
+          Kayıt olarak <Link to="/kullanim-sartlari">Kullanım Şartları</Link> ve{' '}
+          <Link to="/gizlilik">Gizlilik Politikası</Link>’nı kabul etmiş olursun.
         </p>
       </form>
     </div>

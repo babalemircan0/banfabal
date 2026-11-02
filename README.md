@@ -12,10 +12,15 @@ https://banfabal.vercel.app
 
 - İlan listeleme ve filtreleme (arama, il, imar durumu, fiyat, metrekare)
 - İlan ekleme, düzenleme, fotoğraf yükleme ve yönetme
+- Ada, parsel, pafta, tapu durumu, KAKS/TAKS ve altyapı bilgileriyle detaylı arsa ilanı
 - İlan detay sayfası ve yorumlar
 - Kullanıcı kaydı ve girişi (Supabase Auth)
+- Şifre sıfırlama ve şifre yenileme akışı
 - Alıcı-satıcı arasında canlı mesajlaşma (Supabase Realtime)
+- Mesaj düzenleme, silme ve görüldü bilgisi
 - Okunmamış mesaj bildirimi
+- Tüm sayfalarda ortak ve sayfaya göre uyarlanan menü barı
+- KVKK aydınlatma, gizlilik, kullanım şartları ve çerez politikası sayfaları
 - Hesap ve ilan yönetimi
 - Responsive arayüz
 - 404 sayfası ve hata sınırı
@@ -94,6 +99,14 @@ Bu değerler Vite tarafından build sırasında tarayıcıya gömülür. Publish
 - Migration: [`supabase/migrations/20261019154352_guvenlik_ve_performans_iyilestirmeleri.sql`](supabase/migrations/20261019154352_guvenlik_ve_performans_iyilestirmeleri.sql)
 
 Tüm tablolarda RLS açıktır. Kullanıcılar yalnızca kendi ilanlarını, yorumlarını ve konuşmalarını yönetebilir. Fotoğraf yükleme ve silme işlemleri kullanıcı klasörüyle sınırlıdır; bucket için 5 MB ve görsel MIME türü limitleri tanımlıdır.
+
+### Şifre sıfırlama
+
+Supabase panelinde **Authentication → URL Configuration** bölümünde aşağıdaki adresler tanımlanmalıdır:
+
+- Site URL: `https://banfabal.vercel.app`
+- Redirect URL: `https://banfabal.vercel.app/sifre-yenile`
+- Geliştirme için: `http://localhost:5173/sifre-yenile`
 
 > Supabase panelinde **Authentication → Password Security → Leaked Password Protection** ayarını da etkinleştirmeniz önerilir.
 

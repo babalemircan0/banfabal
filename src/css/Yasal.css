@@ -1,0 +1,107 @@
+.yasal-page {
+  flex: 1;
+  padding: 34px 20px 52px;
+  background:
+    radial-gradient(800px 420px at 90% -10%, rgba(20, 83, 45, 0.08), transparent 65%),
+    linear-gradient(180deg, #f6f8f4 0%, #fafafa 50%);
+  text-align: left;
+}
+
+.yasal-card {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 36px 42px 40px;
+  background: #fff;
+  border: 1px solid #e3eae5;
+  border-radius: 18px;
+  box-shadow: 0 18px 44px rgba(16, 61, 38, 0.07);
+}
+
+.yasal-eyebrow {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #5f8069;
+}
+
+.yasal-card h1 {
+  margin: 10px 0 6px;
+  font-size: clamp(26px, 3vw, 34px);
+  letter-spacing: -0.6px;
+  color: #173d2a;
+}
+
+.yasal-update {
+  margin-bottom: 22px;
+  font-size: 13px;
+  color: #8a978f;
+}
+
+.yasal-ozet {
+  padding: 14px 16px;
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: #4f6658;
+  background: #f2f7f3;
+  border-left: 3px solid #7aa78c;
+  border-radius: 0 10px 10px 0;
+}
+
+.yasal-card section { margin-top: 28px; }
+
+.yasal-card h2 {
+  margin: 0 0 10px;
+  font-size: 18px;
+  letter-spacing: -0.2px;
+  color: #173d2a;
+}
+
+.yasal-card p {
+  margin: 0 0 10px;
+  font-size: 14.5px;
+  line-height: 1.75;
+  color: #4f5f55;
+}
+
+.yasal-card ul {
+  margin: 0 0 10px;
+  padding-left: 22px;
+}
+
+.yasal-card li {
+  margin-bottom: 7px;
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: #4f5f55;
+}
+
+.yasal-card a {
+  color: #2f6b47;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.yasal-card a:hover { text-decoration: underline; }
+
+.yasal-footnote {
+  margin-top: 32px;
+  padding-top: 18px;
+  border-top: 1px solid #eef2ee;
+  font-size: 13px;
+  color: #8a978f;
+}
+
+@media (max-width: 640px) {
+  .yasal-page { padding: 18px 12px 32px; }
+
+  .yasal-card {
+    padding: 24px 18px 28px;
+    border-radius: 14px;
+  }
+
+  .yasal-card h1 { font-size: 25px; }
+  .yasal-ozet { font-size: 14px; }
+  .yasal-card p,
+  .yasal-card li { font-size: 14px; }
+}

@@ -33,7 +33,13 @@ Tüm ilan, yorum, konuşma ve mesaj kayıtlarında `ON DELETE CASCADE` kullanıl
 | `fiyat` | numeric | TL |
 | `metrekare` | numeric | m² |
 | `il` / `ilce` | text | Konum |
+| `mahalle` | text | Mahalle / köy |
+| `ada` / `parsel` / `pafta` | text | Kadastro bilgileri |
 | `imar_durumu` | text | Konut, Ticari, Tarla vb. |
+| `tapu_durumu` | text | Müstakil, Hisseli, İfrazlı, Tahsis |
+| `kaks` / `taks` / `gabari` | numeric | İmar değerleri |
+| `yol_cephe` | numeric | Yola cephe (metre) |
+| `altyapilar` | text[] | Yol, Elektrik, Su, Doğalgaz, İnternet |
 | `fotograflar` | text[] | Public storage URL'leri |
 | `satici_adi` | text | Görünen satıcı adı |
 | `created_at` | timestamptz | Oluşturma zamanı |
@@ -71,8 +77,10 @@ Ek kural: `(ilan_id, alici_id)` benzersizdir ve `alici_id <> satici_id` olmalıd
 | `id` | uuid | PK |
 | `konusma_id` | uuid | `konusmalar.id`, cascade |
 | `gonderen_id` | uuid | `auth.users.id`, cascade |
-| `metin` | text | Boş olamaz |
+| `metin` | text | Silinmemişse boş olamaz |
 | `okundu` | boolean | Varsayılan `false` |
+| `duzenlendi_at` | timestamptz | Düzenlenme zamanı (boşsa hiç düzenlenmedi) |
+| `silindi_at` | timestamptz | Silinme zamanı; silinen mesajların metni boşaltılır (soft delete) |
 | `created_at` | timestamptz | Oluşturma zamanı |
 
 ## Legacy `arsalar`

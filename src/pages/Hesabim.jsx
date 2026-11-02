@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import { tarihFormatla } from '../lib/format.js'
-import logo from '../images/logo.png'
 import '../css/Hesap.css'
 
 export default function Hesabim() {
@@ -20,11 +19,6 @@ export default function Hesabim() {
 
   return (
     <div className="hesap-page">
-      <header className="hesap-header">
-        <Link to="/"><img src={logo} alt="Banfabal" className="hesap-logo" /></Link>
-        <Link to="/" className="hesap-back">← Ana sayfa</Link>
-      </header>
-
       <div className="hesap-card">
         <h2>Hesabım</h2>
         <ul className="hesap-list">

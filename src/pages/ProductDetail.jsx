@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
-import logo from '../images/logo.png'
 import MesajModal from '../components/MesajModal.jsx'
-import { fiyatFormatla, tarihFormatla } from '../lib/format.js'
+import { fiyatFormatla, sayiFormatla, tarihFormatla } from '../lib/format.js'
+import { ALTYAPI_SECENEKLERI } from '../lib/ilanForm.js'
 import '../css/Mesajlar.css'
 import '../css/ProductDetail.css'
 
@@ -100,13 +100,20 @@ export default function ProductDetail() {
       })
   }, [id])
 
+  const adaParsel = [
+    ilan?.ada && `Ada ${ilan.ada}`,
+    ilan?.parsel && `Parsel ${ilan.parsel}`,
+    ilan?.pafta && `Pafta ${ilan.pafta}`,
+  ].filter(Boolean).join(' · ')
+
+  const imarDegerleri = [
+    ilan?.kaks != null && `KAKS ${sayiFormatla(ilan.kaks)}`,
+    ilan?.taks != null && `TAKS ${sayiFormatla(ilan.taks)}`,
+    ilan?.gabari != null && `Gabari ${sayiFormatla(ilan.gabari)}`,
+  ].filter(Boolean).join(' · ')
+
   return (
     <div className="detail-page">
-      <header className="detail-header">
-        <Link to="/"><img src={logo} alt="Banfabal" className="detail-logo" /></Link>
-        <Link to="/" className="detail-back">← İlanlara dön</Link>
-      </header>
-
       {loading ? (
         <p className="detail-info">Yükleniyor...</p>
       ) : !ilan ? (
@@ -138,10 +145,43 @@ export default function ProductDetail() {
             <h1>{ilan.baslik}</h1>
             <p className="detail-price">{fiyatFormatla(ilan.fiyat)}</p>
             <ul className="detail-list">
-              <li><span>İlan Sahibi</span>{ilan.satici_adi || 'Belirtilmemiş'}</li>
-              <li><span>Konum</span>{ilan.il} / {ilan.ilce}</li>
-              <li><span>Metrekare</span>{ilan.metrekare} m²</li>
-              <li><span>İmar Durumu</span>{ilan.imar_durumu}</li>
+              <li><span>İlan Sahibi</span>{ilan.satici_adi || <span className="detail-yok">Belirtilmedi</span>}</li>
+              <li>
+                <span>Konum</span>
+                {[ilan.il, ilan.ilce, ilan.mahalle].filter(Boolean).join(' / ') || (
+                  <span className="detail-yok">Belirtilmedi</span>
+                )}
+              </li>
+              <li>
+                <span>Metrekare</span>
+                {ilan.metrekare != null && ilan.metrekare !== ''
+                  ? `${sayiFormatla(ilan.metrekare)} m²`
+                  : <span className="detail-yok">Belirtilmedi</span>}
+              </li>
+              <li>
+                <span>İmar Durumu</span>
+                {ilan.imar_durumu
+                  ? <span className="detail-badge">{ilan.imar_durumu}</span>
+                  : <span className="detail-yok">Belirtilmedi</span>}
+              </li>
+              <li>
+                <span>Ada / Parsel</span>
+                {adaParsel || <span className="detail-yok">Belirtilmedi</span>}
+              </li>
+              <li>
+                <span>Tapu Durumu</span>
+                {ilan.tapu_durumu || <span className="detail-yok">Belirtilmedi</span>}
+              </li>
+              <li>
+                <span>İmar Değerleri</span>
+                {imarDegerleri || <span className="detail-yok">Belirtilmedi</span>}
+              </li>
+              <li>
+                <span>Yola Cephe</span>
+                {ilan.yol_cephe != null
+                  ? `${sayiFormatla(ilan.yol_cephe)} m`
+                  : <span className="detail-yok">Belirtilmedi</span>}
+              </li>
             </ul>
 
             {user?.id !== ilan.user_id && (
@@ -157,11 +197,11 @@ export default function ProductDetail() {
               </>
             )}
 
-            {ilan.aciklama && (
-              <>
-                <h2>Açıklama</h2>
-                <p className="detail-desc">{ilan.aciklama}</p>
-              </>
+            <h2>Açıklama</h2>
+            {ilan.aciklama ? (
+              <p className="detail-desc">{ilan.aciklama}</p>
+            ) : (
+              <p className="detail-desc detail-yok">Belirtilmedi</p>
             )}
           </div>
         </div>
@@ -169,6 +209,44 @@ export default function ProductDetail() {
 
       {mesajAcik && user && ilan && (
         <MesajModal ilan={ilan} user={user} onClose={() => setMesajAcik(false)} />
+      )}
+
+      {!loading && ilan && (
+        <section className="detail-features">
+          <h2>Özellikler</h2>
+          <div className="detail-feature-group">
+            <h3>Altyapı</h3>
+            {ilan.altyapilar?.length > 0 ? (
+              <ul className="detail-feature-grid">
+                {[
+                  ...ALTYAPI_SECENEKLERI,
+                  ...ilan.altyapilar.filter((a) => !ALTYAPI_SECENEKLERI.includes(a)),
+                ].map((secenek) => {
+                  const varMi = ilan.altyapilar.includes(secenek)
+                  return (
+                    <li key={secenek} className={varMi ? 'var' : ''}>
+                      <span className="detail-feature-check" aria-hidden="true">
+                        <svg viewBox="0 0 12 10">
+                          <path
+                            d="M1 5.2 4.1 8.3 11 1.5"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </span>
+                      {secenek}
+                    </li>
+                  )
+                })}
+              </ul>
+            ) : (
+              <p className="detail-feature-empty">Belirtilmedi</p>
+            )}
+          </div>
+        </section>
       )}
 
       {!loading && ilan && (

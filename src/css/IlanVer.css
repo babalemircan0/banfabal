@@ -9,10 +9,10 @@
 
 .ilan-card {
   width: 100%;
-  max-width: 560px;
+  max-width: 720px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
   padding: 28px;
   background: #fff;
   border: 1px solid #e5e5e5;
@@ -20,9 +20,132 @@
   align-self: flex-start;
 }
 
-.ilan-logo { display: block; height: 44px; width: auto; margin: 0 auto; }
+.ilan-heading { text-align: center; }
 
 .ilan-card h2 { margin: 0; text-align: center; font-size: 22px; color: #222; }
+
+.ilan-heading p {
+  margin-top: 6px;
+  font-size: 14px;
+  color: #777;
+}
+
+.ilan-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  margin: 0;
+  padding: 16px;
+  background: #fcfcfc;
+  border: 1px solid #ececec;
+  border-radius: 10px;
+}
+
+.ilan-section legend {
+  padding: 0 6px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #4c7a5c;
+}
+
+.ilan-section-hint {
+  margin-top: -4px;
+  font-size: 13px;
+  color: #888;
+}
+
+.ilan-hint {
+  font-size: 13px;
+  color: #666;
+}
+
+.ilan-hint strong { color: #14532d; }
+
+.ilan-grid-3,
+.ilan-grid-4 {
+  display: grid;
+  gap: 12px;
+}
+
+.ilan-grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.ilan-grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+.ilan-ozellik-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2px 16px;
+  padding: 12px;
+  background: #f7faf6;
+  border: 1px solid #e3ede6;
+  border-radius: 8px;
+}
+
+.ilan-card .ilan-ozellik {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 8px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #98a39b;
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+}
+
+.ilan-card .ilan-ozellik:hover {
+  color: #5d6d62;
+  background: #edf4ef;
+}
+
+.ilan-card .ilan-ozellik.secili {
+  color: #14532d;
+  font-weight: 600;
+}
+
+.ilan-ozellik input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ilan-ozellik input:focus-visible + .ilan-ozellik-isaret {
+  outline: 2px solid #2f7d4f;
+  outline-offset: 2px;
+}
+
+.ilan-ozellik-isaret {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 17px;
+  height: 17px;
+  color: transparent;
+  background: #fff;
+  border: 1.5px solid #cfd8d1;
+  border-radius: 4px;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.ilan-ozellik-isaret svg {
+  width: 10px;
+  height: 8px;
+}
+
+.ilan-ozellik.secili .ilan-ozellik-isaret {
+  color: #fff;
+  background: #1f7a45;
+  border-color: #1f7a45;
+}
 
 .ilan-card label {
   display: flex;
@@ -147,3 +270,13 @@
   transition: opacity 0.15s;
 }
 .foto-item:hover .foto-cover { opacity: 1; }
+
+@media (max-width: 700px) {
+  .ilan-page { padding: 20px 12px; }
+  .ilan-card { padding: 20px 16px; }
+  .ilan-row { flex-direction: column; }
+  .ilan-grid-3,
+  .ilan-grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ilan-grid-3 > label:last-child { grid-column: 1 / -1; }
+  .ilan-ozellik-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

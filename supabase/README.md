@@ -9,7 +9,7 @@ Bu klasör, Banfabal uygulamasının Supabase şemasını ve güvenlik politikal
 
 | Tablo | Açıklama | RLS |
 |---|---|---|
-| `ilanlar` | Emlak ilanları | Açık |
+| `ilanlar` | Arsa ilanları | Açık |
 | `yorumlar` | İlan yorumları | Açık |
 | `konusmalar` | Alıcı-satıcı konuşmaları | Açık |
 | `mesajlar` | Konuşma mesajları | Açık |
@@ -35,8 +35,8 @@ Bu klasör, Banfabal uygulamasının Supabase şemasını ve güvenlik politikal
 ### `mesajlar`
 - `SELECT`: Yalnızca konuşmanın tarafları.
 - `INSERT`: Gönderen `auth.uid()` olmalı ve konuşmanın tarafı olmalı.
-- `UPDATE`: Yalnızca karşı taraf `okundu` alanını güncelleyebilir. Kolon seviyesinde yalnızca `okundu` UPDATE yetkisi vardır.
-- `DELETE`: İstemciden kapalı.
+- `UPDATE`: Gönderen kendi mesajının `metin` alanını düzenleyebilir veya `silindi_at` ile silebilir (soft delete); karşı taraf `okundu` alanını güncelleyebilir. Kolon seviyesinde yalnızca `okundu`, `metin`, `duzenlendi_at` ve `silindi_at` UPDATE yetkisi vardır.
+- `DELETE`: İstemciden kapalı; silme işlemi `silindi_at` alanı doldurularak yapılır.
 
 ## Storage
 
@@ -59,7 +59,7 @@ supabase db push
 veya tek dosyayı SQL Editor üzerinden çalıştırabilirsiniz:
 
 ```bash
-supabase/migrations/20261019154352_guvenlik_ve_performans_iyilestirmeleri.sql
+supabase/migrations/20261029172000_arsa_detay_alanlari.sql
 ```
 
 ## Not

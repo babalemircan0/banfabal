@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import Sohbet from '../components/Sohbet.jsx'
-import logo from '../images/logo.png'
+import { basHarfler } from '../lib/format.js'
 import '../css/Mesajlar.css'
 
 export default function Mesajlar() {
@@ -46,6 +46,7 @@ export default function Mesajlar() {
           .in('konusma_id', konusmaIdleri)
           .eq('okundu', false)
           .neq('gonderen_id', user.id)
+          .is('silindi_at', null)
 
         ;(m || []).forEach((x) => {
           sayilar[x.konusma_id] = (sayilar[x.konusma_id] || 0) + 1
@@ -72,48 +73,75 @@ export default function Mesajlar() {
 
   if (!user) return null
 
+  const toplamOkunmamis = Object.values(okunmamis).reduce((toplam, sayi) => toplam + sayi, 0)
+
   return (
     <div className="mesajlar-page">
-      <header className="mesajlar-header">
-        <Link to="/"><img src={logo} alt="Banfabal" className="mesajlar-logo" /></Link>
-        <Link to="/" className="mesajlar-back">← Ana sayfa</Link>
-      </header>
-
       <div className="mesajlar-layout">
         <aside className="mesajlar-list">
-          <h2>Mesajlar</h2>
-          {hata && <p className="mesajlar-empty">{hata}</p>}
-          {loading ? (
-            <p className="mesajlar-empty">Yükleniyor...</p>
-          ) : konusmalar.length === 0 ? (
-            <p className="mesajlar-empty">Henüz mesajın yok.</p>
-          ) : (
-            konusmalar.map((k) => {
-              const karsi = user.id === k.alici_id ? k.satici_adi : k.alici_adi
-              const sayi = okunmamis[k.id] || 0
-              return (
-                <button
-                  type="button"
-                  key={k.id}
-                  className={secili?.id === k.id ? 'konusma active' : 'konusma'}
-                  onClick={() => sec(k)}
-                >
-                  <div>
-                    <strong>{karsi || 'Kullanıcı'}</strong>
-                    <span>{k.ilan_baslik}</span>
+          <div className="mesajlar-list-head">
+            <h2>Mesajlar</h2>
+            {toplamOkunmamis > 0 && <span className="mesajlar-count">{toplamOkunmamis}</span>}
+          </div>
+
+          <div className="mesajlar-konusmalar">
+            {hata && <p className="mesajlar-empty">{hata}</p>}
+
+            {loading ? (
+              <div className="mesajlar-skeleton">
+                {[0, 1, 2].map((i) => (
+                  <div className="skeleton-row" key={i}>
+                    <span className="skeleton-avatar" />
+                    <span className="skeleton-lines">
+                      <span />
+                      <span />
+                    </span>
                   </div>
-                  {sayi > 0 && <em className="nav-badge">{sayi}</em>}
-                </button>
-              )
-            })
-          )}
+                ))}
+              </div>
+            ) : konusmalar.length === 0 ? (
+              <div className="mesajlar-empty-box">
+                <span className="empty-icon" aria-hidden="true">✉</span>
+                <strong>Henüz mesajın yok</strong>
+                <span>Bir ilana göz atıp satıcıya mesaj gönderebilirsin.</span>
+              </div>
+            ) : (
+              konusmalar.map((k) => {
+                const karsi = user.id === k.alici_id ? k.satici_adi : k.alici_adi
+                const sayi = okunmamis[k.id] || 0
+                return (
+                  <button
+                    type="button"
+                    key={k.id}
+                    className={secili?.id === k.id ? 'konusma active' : 'konusma'}
+                    onClick={() => sec(k)}
+                  >
+                    <span className="konusma-avatar" aria-hidden="true">
+                      {basHarfler(karsi)}
+                    </span>
+                    <span className="konusma-info">
+                      <span className="konusma-ust">
+                        <strong>{karsi || 'Kullanıcı'}</strong>
+                        {sayi > 0 && <em className="konusma-badge">{sayi}</em>}
+                      </span>
+                      <span className="konusma-ilan">{k.ilan_baslik || 'İlan'}</span>
+                    </span>
+                  </button>
+                )
+              })
+            )}
+          </div>
         </aside>
 
         <section className="mesajlar-chat">
           {secili ? (
             <Sohbet key={secili.id} konusma={secili} user={user} />
           ) : (
-            <p className="mesajlar-empty">Bir konuşma seç.</p>
+            <div className="sohbet-bos">
+              <span className="sohbet-bos-icon" aria-hidden="true">💬</span>
+              <strong>Bir konuşma seç</strong>
+              <p>Soldaki listeden bir konuşmaya dokunarak mesajlaşmaya başla.</p>
+            </div>
           )}
         </section>
       </div>

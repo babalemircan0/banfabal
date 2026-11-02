@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import { fotoSil } from '../lib/storage.js'
 import { fiyatFormatla } from '../lib/format.js'
-import logo from '../images/logo.png'
 import '../css/Hesap.css'
 
 export default function Ilanlarim() {
@@ -48,11 +47,6 @@ export default function Ilanlarim() {
 
   return (
     <div className="hesap-page">
-      <header className="hesap-header">
-        <Link to="/"><img src={logo} alt="Banfabal" className="hesap-logo" /></Link>
-        <Link to="/" className="hesap-back">← Ana sayfa</Link>
-      </header>
-
       <div className="hesap-wide">
         <div className="hesap-title">
           <h2>İlanlarım</h2>

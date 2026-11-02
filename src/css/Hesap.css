@@ -1,18 +1,5 @@
 .hesap-page { flex: 1; background: #fafafa; text-align: left; }
 
-.hesap-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 28px;
-  background: #fff;
-  border-bottom: 1px solid #e5e5e5;
-}
-
-.hesap-logo { display: block; height: 44px; width: auto; }
-.hesap-back { font-size: 15px; color: #333; text-decoration: none; }
-.hesap-back:hover { text-decoration: underline; }
-
 .hesap-card,
 .hesap-wide {
   margin: 28px auto;

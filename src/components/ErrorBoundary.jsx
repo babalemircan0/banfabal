@@ -1,6 +1,5 @@
 import { Component } from 'react'
 import { Link } from 'react-router-dom'
-import logo from '../images/logo.png'
 import '../css/Auth.css'
 
 export default class ErrorBoundary extends Component {
@@ -22,7 +21,6 @@ export default class ErrorBoundary extends Component {
       return (
         <div className="auth-page">
           <div className="auth-card">
-            <img src={logo} alt="Banfabal" className="auth-logo" />
             <h2>Bir şeyler ters gitti</h2>
             <p className="auth-switch">
               Sayfayı yenilemeyi deneyebilir veya ana sayfaya dönebilirsin.

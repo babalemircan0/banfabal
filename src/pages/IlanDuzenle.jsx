@@ -1,8 +1,15 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
-import logo from '../images/logo.png'
+import ArsaBilgileri from '../components/ArsaBilgileri.jsx'
 import FotoSecici from '../components/FotoSecici.jsx'
+import { fiyatFormatla } from '../lib/format.js'
+import {
+  BOS_ILAN_FORM,
+  altyapiSecimiDegistir,
+  arsaDetaylari,
+  sayisalAlanlarGecerliMi,
+} from '../lib/ilanForm.js'
 import { FOTO_BUCKET, fotoSil } from '../lib/storage.js'
 import '../css/IlanVer.css'
 
@@ -32,13 +39,24 @@ export default function IlanDuzenle() {
         return
       }
       setForm({
+        ...BOS_ILAN_FORM,
         baslik: ilan.baslik || '',
         aciklama: ilan.aciklama || '',
         fiyat: ilan.fiyat ?? '',
         metrekare: ilan.metrekare ?? '',
         il: ilan.il || '',
         ilce: ilan.ilce || '',
+        mahalle: ilan.mahalle || '',
+        ada: ilan.ada || '',
+        parsel: ilan.parsel || '',
+        pafta: ilan.pafta || '',
         imar_durumu: ilan.imar_durumu || 'Konut',
+        tapu_durumu: ilan.tapu_durumu || 'Müstakil tapu',
+        kaks: ilan.kaks ?? '',
+        taks: ilan.taks ?? '',
+        gabari: ilan.gabari ?? '',
+        yol_cephe: ilan.yol_cephe ?? '',
+        altyapilar: ilan.altyapilar || [],
       })
       setEskiFotograflar(ilan.fotograflar || [])
       setFotolar((ilan.fotograflar || []).map((url) => ({ id: url, url })))
@@ -46,7 +64,26 @@ export default function IlanDuzenle() {
     })
   }, [id, navigate])
 
-  const set = (k) => (e) => setForm({ ...form, [k]: e.target.value })
+  const set = (k) => (e) => {
+    const deger = e.target.value
+    setForm((onceki) => ({ ...onceki, [k]: deger }))
+  }
+
+  const altyapiDegistir = (secenek) => {
+    setForm((onceki) => ({
+      ...onceki,
+      altyapilar: altyapiSecimiDegistir(onceki.altyapilar, secenek),
+    }))
+  }
+
+  const ilDegistir = (e) => {
+    const il = e.target.value
+    setForm((onceki) => ({ ...onceki, il, ilce: '' }))
+  }
+
+  const fiyatSayi = Number(form?.fiyat)
+  const metrekareSayi = Number(form?.metrekare)
+  const birimFiyat = fiyatSayi > 0 && metrekareSayi > 0 ? fiyatSayi / metrekareSayi : null
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -54,10 +91,13 @@ export default function IlanDuzenle() {
     setSaving(true)
     setError('')
 
-    const fiyat = Number(form.fiyat)
-    const metrekare = Number(form.metrekare)
-    if (!Number.isFinite(fiyat) || fiyat < 0 || !Number.isFinite(metrekare) || metrekare < 0) {
+    if (!Number.isFinite(fiyatSayi) || fiyatSayi < 0 || !Number.isFinite(metrekareSayi) || metrekareSayi < 0) {
       setError('Fiyat ve metrekare geçerli bir sayı olmalı.')
+      setSaving(false)
+      return
+    }
+    if (!sayisalAlanlarGecerliMi(form)) {
+      setError('KAKS, TAKS, gabari ve yola cephe 0 veya daha büyük sayı olmalı.')
       setSaving(false)
       return
     }
@@ -81,13 +121,14 @@ export default function IlanDuzenle() {
       const { error: updErr } = await supabase
         .from('ilanlar')
         .update({
-          ...form,
+          ...arsaDetaylari(form),
           baslik: form.baslik.trim(),
           aciklama: form.aciklama.trim(),
           il: form.il.trim(),
           ilce: form.ilce.trim(),
-          fiyat,
-          metrekare,
+          imar_durumu: form.imar_durumu,
+          fiyat: fiyatSayi,
+          metrekare: metrekareSayi,
           fotograflar: urller,
         })
         .eq('id', id)
@@ -114,45 +155,38 @@ export default function IlanDuzenle() {
   return (
     <div className="ilan-page">
       <form className="ilan-card" onSubmit={handleSubmit}>
-        <Link to="/"><img src={logo} alt="Banfabal" className="ilan-logo" /></Link>
-        <h2>İlanı Düzenle</h2>
-
-        <label>Başlık
-          <input required maxLength={120} value={form.baslik} onChange={set('baslik')} />
-        </label>
-
-        <label>Açıklama
-          <textarea rows="4" maxLength={2000} value={form.aciklama} onChange={set('aciklama')} />
-        </label>
-
-        <div className="ilan-row">
-          <label>Fiyat (₺)
-            <input required type="number" min="0" value={form.fiyat} onChange={set('fiyat')} />
-          </label>
-          <label>Metrekare (m²)
-            <input required type="number" min="0" value={form.metrekare} onChange={set('metrekare')} />
-          </label>
+        <div className="ilan-heading">
+          <h2>İlanı Düzenle</h2>
+          <p>Arsa bilgilerini güncel tut; ada ve parsel bilgisi alıcılar için önemli.</p>
         </div>
 
-        <div className="ilan-row">
-          <label>İl
-            <input required maxLength={50} value={form.il} onChange={set('il')} />
+        <fieldset className="ilan-section">
+          <legend>İlan bilgileri</legend>
+          <label>Başlık
+            <input required maxLength={120} value={form.baslik} onChange={set('baslik')} />
           </label>
-          <label>İlçe
-            <input required maxLength={50} value={form.ilce} onChange={set('ilce')} />
-          </label>
-        </div>
 
-        <label>İmar Durumu
-          <select value={form.imar_durumu} onChange={set('imar_durumu')}>
-            <option>Konut</option>
-            <option>Ticari</option>
-            <option>Tarla</option>
-            <option>Bağ / Bahçe</option>
-            <option>Sanayi</option>
-            <option>Diğer</option>
-          </select>
-        </label>
+          <label>Açıklama
+            <textarea rows="4" maxLength={2000} value={form.aciklama} onChange={set('aciklama')} />
+          </label>
+
+          <div className="ilan-row">
+            <label>Fiyat (₺)
+              <input required type="number" min="0" value={form.fiyat} onChange={set('fiyat')} />
+            </label>
+            <label>Metrekare (m²)
+              <input required type="number" min="0" value={form.metrekare} onChange={set('metrekare')} />
+            </label>
+          </div>
+
+          {birimFiyat !== null && (
+            <p className="ilan-hint">
+              m² birim fiyatı: <strong>{fiyatFormatla(Math.round(birimFiyat))}</strong>
+            </p>
+          )}
+        </fieldset>
+
+        <ArsaBilgileri form={form} set={set} ilDegistir={ilDegistir} altyapiDegistir={altyapiDegistir} />
 
         <FotoSecici items={fotolar} setItems={setFotolar} />
 

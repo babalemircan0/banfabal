@@ -20,13 +20,6 @@
   border-radius: 10px;
 }
 
-.auth-logo {
-  display: block;
-  height: 44px;
-  width: auto;
-  margin: 0 auto;
-}
-
 .auth-card h2 {
   margin: 0;
   text-align: center;
@@ -82,3 +75,37 @@
 }
 
 .auth-switch a { color: #222; font-weight: 500; }
+
+.auth-lead {
+  margin-top: -6px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  text-align: center;
+  color: #777;
+}
+
+.auth-forgot-row {
+  margin-top: -8px;
+  text-align: right;
+}
+
+.auth-forgot {
+  font-size: 13px;
+  color: #2f6b47;
+  text-decoration: none;
+}
+
+.auth-forgot:hover { text-decoration: underline; }
+
+.auth-legal {
+  font-size: 11.5px;
+  line-height: 1.55;
+  text-align: center;
+  color: #8a978f;
+}
+
+.auth-legal a {
+  color: #4c7a5c;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
