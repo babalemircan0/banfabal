@@ -257,7 +257,7 @@ export default function Sohbet({ konusma, user }) {
                   <p>{m.silindi_at ? 'Bu mesaj silindi.' : m.metin}</p>
                 )}
 
-                <span className={m.silindi_at ? 'bubble-meta silindi-meta' : 'bubble-meta'}>
+                <span className="bubble-meta">
                   {saatFormatla(m.created_at)}
                   {!m.silindi_at && m.duzenlendi_at ? (
                     <span className="bubble-etiket"> · düzenlendi</span>

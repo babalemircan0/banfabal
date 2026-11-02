@@ -56,7 +56,7 @@ export const sayiVeyaNull = (deger) => {
   return Number(metin.replace(',', '.'))
 }
 
-export const SAYISAL_ALANLAR = ['kaks', 'taks', 'gabari', 'yol_cephe']
+const SAYISAL_ALANLAR = ['kaks', 'taks', 'gabari', 'yol_cephe']
 
 export function sayisalAlanlarGecerliMi(form) {
   return SAYISAL_ALANLAR.every((alan) => {

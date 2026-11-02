@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import { basHarfler, fiyatFormatla, sayiFormatla, tarihFormatla } from '../lib/format.js'
 import { ILLER, ilceleriGetir } from '../lib/iller.js'
+import { IMAR_SECENEKLERI } from '../lib/ilanForm.js'
 import '../css/Home.css'
 
 const BOS_FILTRE = {
@@ -15,8 +16,6 @@ const BOS_FILTRE = {
   minM2: '',
   maxM2: '',
 }
-
-const IMAR_SECENEKLERI = ['Konut', 'Ticari', 'Tarla', 'Bağ / Bahçe', 'Sanayi', 'Diğer']
 
 const SIRALAMALAR = [
   { deger: 'yeni', etiket: 'En yeni' },

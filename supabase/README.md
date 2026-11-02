@@ -56,11 +56,7 @@ supabase link --project-ref jndhfuascjxjbjobneun
 supabase db push
 ```
 
-veya tek dosyayı SQL Editor üzerinden çalıştırabilirsiniz:
-
-```bash
-supabase/migrations/20261029172000_arsa_detay_alanlari.sql
-```
+veya `supabase/migrations/` altındaki dosyaları SQL Editor üzerinden tarih sırasıyla çalıştırabilirsiniz.
 
 ## Not
 

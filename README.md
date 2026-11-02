@@ -96,7 +96,7 @@ Bu değerler Vite tarafından build sırasında tarayıcıya gömülür. Publish
 
 - Tablo şeması: [`docs/veritabani.md`](docs/veritabani.md)
 - RLS, storage ve migration detayları: [`supabase/README.md`](supabase/README.md)
-- Migration: [`supabase/migrations/20261019154352_guvenlik_ve_performans_iyilestirmeleri.sql`](supabase/migrations/20261019154352_guvenlik_ve_performans_iyilestirmeleri.sql)
+- Migration: [`supabase/migrations/`](supabase/migrations/)
 
 Tüm tablolarda RLS açıktır. Kullanıcılar yalnızca kendi ilanlarını, yorumlarını ve konuşmalarını yönetebilir. Fotoğraf yükleme ve silme işlemleri kullanıcı klasörüyle sınırlıdır; bucket için 5 MB ve görsel MIME türü limitleri tanımlıdır.
 

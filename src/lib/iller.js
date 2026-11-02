@@ -83,8 +83,6 @@ export const ILLER = [
   { ad: 'Zonguldak', ilceler: ['Alaplı', 'Çaycuma', 'Devrek', 'Ereğli', 'Gökçebey', 'Kilimli', 'Kozlu', 'Merkez'] },
 ]
 
-export const IL_ADLARI = ILLER.map((il) => il.ad)
-
 export const ilceleriGetir = (il) => ILLER.find((kayit) => kayit.ad === il)?.ilceler ?? []
 
 export const ilVarMi = (il) => ILLER.some((kayit) => kayit.ad === il)
